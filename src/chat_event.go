@@ -32,10 +32,8 @@ func handleCommand(body string, user *User) {
 	switch command {
 	case CommandWho:
 		HandleWhoCommand(user)
-		/*
-			case CommandChannel:
-				HandleChannelCommand(splitBody, connection)
-		*/
+	case CommandChannel:
+		HandleChannelCommand(splitBody, user)
 	default:
 		SendToOne("Command "+"'"+body+"' not recognized.", user, EventNotification)
 	}
@@ -148,6 +146,7 @@ func HandleLoginEvent(body string, user *User) error {
 				response := EventData{Event: EventNotification, Body: "Login error.", UserCount: UserCount, CreatedDate: time.Now()}
 				return marshalAndWrite(response)
 			}
+			// TODO. Lisää käyttäjän nimi bodyyn.
 			response := EventData{Event: EventLogin, Auth: loginRes.Token, UserCount: UserCount, CreatedDate: time.Now()}
 			log.Print("HandleLoginEvent():", "Login successful")
 			return marshalAndWrite(response)
@@ -180,7 +179,7 @@ func HandleMessageEvent(body string, user *User) error {
 
 // HandleJoin -
 func HandleJoin(chatUser *User) error {
-	response := EventData{Event: EventJoin, Body: chatUser.Name, UserCount: UserCount, CreatedDate: time.Now()}
+	response := EventData{Event: EventJoin, Body: chatUser.Name, UserCount: UserCount, CreatedDate: time.Now(), Auth: chatUser.Token}
 	chatHistory := GetChatHistory()
 	if chatHistory != nil {
 		if err := chatUser.write(websocket.TextMessage, chatHistory); err != nil {
@@ -207,7 +206,6 @@ func HandleTypingEvent(body string, user *User) error {
 func HandleNameChangeEvent(body string, user *User, token string) error {
 	if len(body) <= 64 && len(body) >= 1 {
 		var originalName string
-		var authToken = ""
 		body = strings.ReplaceAll(body, " ", "")
 		if body == "" {
 			// TODO. Palauta joku virhe käyttäjälle vääränlaisesta nimestä.
@@ -217,18 +215,10 @@ func HandleNameChangeEvent(body string, user *User, token string) error {
 		key, _ := Users.Load(user)
 		user := key.(*User)
 		log.Println("handleNameChangeEvent(): User " + user.Name + " is changing name.")
-		if len(token) > 0 {
-			gatewayRes, err := refreshToken(token)
-			if err != nil {
-				SendToOne("Session error. Disconnected from chat. Refresh your browser to reconnect.", user, EventNotification)
-				return err
-			}
-			authToken = gatewayRes.Token
-		}
 		originalName = user.Name
 		user.Name = body
 		Users.Store(user, user)
-		response := EventData{Event: EventNameChange, Body: user.Name, UserCount: UserCount, CreatedDate: time.Now(), Auth: authToken}
+		response := EventData{Event: EventNameChange, Body: user.Name, UserCount: UserCount, CreatedDate: time.Now(), Auth: token}
 		jsonResponse, err := json.Marshal(response)
 		if err != nil {
 			return err

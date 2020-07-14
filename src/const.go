@@ -27,6 +27,9 @@ const EventChatHistory = "chatHistory"
 // EventWho - An event for who
 const EventWho = "whoCommand"
 
+// CommandChannelCreate - Create channel
+const CommandChannelCreate = "create"
+
 // CommandWho - List users command for the chat.
 const CommandWho = "who"
 

@@ -16,6 +16,12 @@ type chatHistory struct {
 	Event     string      `json:"event"`
 }
 
+type channelResponse struct {
+	Body      []EventData `json:"history"`
+	UserCount int32       `json:"userCount"`
+	Event     string      `json:"event"`
+}
+
 // UpdateChatHistory - Adds the parameter defined chat history entry to chat history
 func UpdateChatHistory(jsonResponse []byte) {
 	client := &http.Client{}
@@ -70,4 +76,9 @@ func GetChatHistory() []byte {
 		return nil
 	}
 	return jsonResponse
+}
+
+// CreateChatChannel - Creates a chat channel and adds the user with the corresponding email to the new channel. Requires user authentication.
+func CreateChatChannel(channelName string, userEmail string) []byte {
+	return nil
 }

@@ -1,19 +1,34 @@
 package main
 
 import (
-	"log"
-	"github.com/gorilla/websocket"
 	"encoding/json"
+	"github.com/gorilla/websocket"
+	"log"
 )
 
-// HandleChannelCommand - dibadaba
-func HandleChannelCommand(commands []string, connection *websocket.Conn) {
-	
+// HandleChannelCommand - For channel specific operations like list and create.
+func HandleChannelCommand(commands []string, user *User) {
+	var subCommand string
+	var parameter string
+	if len(commands) >= 2 {
+		subCommand = commands[1]
+		if subCommand != "" {
+			switch parameter {
+			case CommandChannelCreate:
+				if len(commands) >= 3 {
+					parameter = commands[2]
+					CreateChatChannel(parameter, user.Email)
+				}
+			}
+		}
+	}
+	log.Println("HandleChannelCommand(): ", "insufficient parameters for channel command.")
+	return
 }
 
 // HandleUserCommand - sdgsdfg
 func HandleUserCommand(commands []string, connection *websocket.Conn) {
-	
+
 }
 
 // HandleWhoCommand - who is present in the current channel
