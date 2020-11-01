@@ -8,6 +8,7 @@ import (
 // User - A chat user.
 type User struct {
 	Name       string
+	Email      string
 	Token      string
 	Connection *websocket.Conn
 	mutex      sync.Mutex

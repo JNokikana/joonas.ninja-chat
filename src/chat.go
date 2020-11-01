@@ -135,6 +135,14 @@ func reader(user *User) {
 		}
 		if messageType == websocket.TextMessage {
 			readerError = json.Unmarshal(message, &EventData)
+			if len(EventData.Auth) > 0 {
+				gatewayRes, err := refreshToken(EventData.Auth)
+				if err != nil {
+					SendToOne("Session error. Disconnected from chat.", user, EventNotification)
+					readerError = err
+				}
+				EventData.Auth = gatewayRes.Token
+			}
 			if readerError != nil {
 				return
 			}

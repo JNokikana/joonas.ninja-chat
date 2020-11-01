@@ -147,6 +147,7 @@ func HandleLoginEvent(body string, user *User) error {
 				response := EventData{Event: EventNotification, Body: "Login error.", UserCount: UserCount, CreatedDate: time.Now()}
 				return marshalAndWrite(response)
 			}
+			// TODO. Lisää käyttäjän nimi bodyyn.
 			response := EventData{Event: EventLogin, Auth: loginRes.Token, UserCount: UserCount, CreatedDate: time.Now()}
 			log.Print("HandleLoginEvent():", "Login successful")
 			return marshalAndWrite(response)
@@ -179,7 +180,7 @@ func HandleMessageEvent(body string, user *User) error {
 
 // HandleJoin -
 func HandleJoin(chatUser *User) error {
-	response := EventData{Event: EventJoin, Body: chatUser.Name, UserCount: UserCount, CreatedDate: time.Now()}
+	response := EventData{Event: EventJoin, Body: chatUser.Name, UserCount: UserCount, CreatedDate: time.Now(), Auth: chatUser.Token}
 	chatHistory := GetChatHistory()
 	if chatHistory != nil {
 		if err := chatUser.write(websocket.TextMessage, chatHistory); err != nil {
@@ -227,7 +228,7 @@ func HandleNameChangeEvent(body string, user *User, token string) error {
 		originalName = user.Name
 		user.Name = body
 		Users.Store(user, user)
-		response := EventData{Event: EventNameChange, Body: user.Name, UserCount: UserCount, CreatedDate: time.Now(), Auth: authToken}
+		response := EventData{Event: EventNameChange, Body: user.Name, UserCount: UserCount, CreatedDate: time.Now(), Auth: token}
 		jsonResponse, err := json.Marshal(response)
 		if err != nil {
 			return err
