@@ -101,6 +101,7 @@ func SendToOther(body string, user *User, eventType string) {
 }
 
 func newChatConnection(connection *websocket.Conn, cookie string) {
+	log.Print("chatRequest():", cookie)
 	log.Print("chatRequest():", "Connection opened.")
 	nano := strconv.Itoa(int(time.Now().UnixNano()))
 	newUser := User{Name: "Anon" + nano, Connection: connection}

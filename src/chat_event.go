@@ -5,13 +5,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 type chatLogin struct {
@@ -32,10 +33,8 @@ func handleCommand(body string, user *User) {
 	switch command {
 	case CommandWho:
 		HandleWhoCommand(user)
-		/*
-			case CommandChannel:
-				HandleChannelCommand(splitBody, connection)
-		*/
+	case CommandChannel:
+		HandleChannelCommand(splitBody, user)
 	default:
 		SendToOne("Command "+"'"+body+"' not recognized.", user, EventNotification)
 	}

@@ -35,3 +35,6 @@ const CommandUser = "user"
 
 // CommandChannel - Channel command that is used as a prefix for all the different channel operations like create and list.
 const CommandChannel = "channel"
+
+// SubCommandCreate - SubCommandCreate
+const SubCommandCreate = "create"

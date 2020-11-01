@@ -1,19 +1,24 @@
 package main
 
 import (
-	"log"
-	"github.com/gorilla/websocket"
 	"encoding/json"
+	"log"
+
+	"github.com/gorilla/websocket"
 )
 
-// HandleChannelCommand - dibadaba
-func HandleChannelCommand(commands []string, connection *websocket.Conn) {
-	
+// HandleChannelCommand - Tyyppiä /channel <lisäkomento tähän>
+func HandleChannelCommand(commands []string, user *User) {
+	var subCommand = commands[2]
+	switch subCommand {
+	case SubCommandCreate:
+		
+	}
 }
 
 // HandleUserCommand - sdgsdfg
 func HandleUserCommand(commands []string, connection *websocket.Conn) {
-	
+
 }
 
 // HandleWhoCommand - who is present in the current channel
